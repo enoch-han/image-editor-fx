@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_image_editor" default="compile.module.image_editor">
+  <dirname property="module.image_editor.basedir" file="${ant.file.module_image_editor}"/>
+  
+  <property name="module.jdk.home.image_editor" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.image_editor" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.image_editor" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.image_editor" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="image_editor.output.dir" value="${module.image_editor.basedir}/out/production/Image Editor"/>
+  <property name="image_editor.testoutput.dir" value="${module.image_editor.basedir}/out/test/Image Editor"/>
+  
+  <path id="image_editor.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="image_editor.module.production.classpath">
+    <path refid="${module.jdk.classpath.image_editor}"/>
+  </path>
+  
+  <path id="image_editor.runtime.production.module.classpath">
+    <pathelement location="${image_editor.output.dir}"/>
+  </path>
+  
+  <path id="image_editor.module.classpath">
+    <path refid="${module.jdk.classpath.image_editor}"/>
+    <pathelement location="${image_editor.output.dir}"/>
+  </path>
+  
+  <path id="image_editor.runtime.module.classpath">
+    <pathelement location="${image_editor.testoutput.dir}"/>
+    <pathelement location="${image_editor.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.image_editor">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.image_editor">
+    <patternset refid="excluded.from.module.image_editor"/>
+  </patternset>
+  
+  <path id="image_editor.module.sourcepath">
+    <dirset dir="${module.image_editor.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.image_editor" depends="compile.module.image_editor.production,compile.module.image_editor.tests" description="Compile module Image Editor"/>
+  
+  <target name="compile.module.image_editor.production" depends="register.custom.compilers" description="Compile module Image Editor; production classes">
+    <mkdir dir="${image_editor.output.dir}"/>
+    <javac2 destdir="${image_editor.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.image_editor}/javac">
+      <compilerarg line="${compiler.args.image_editor}"/>
+      <bootclasspath refid="image_editor.module.bootclasspath"/>
+      <classpath refid="image_editor.module.production.classpath"/>
+      <src refid="image_editor.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.image_editor"/>
+    </javac2>
+    
+    <copy todir="${image_editor.output.dir}">
+      <fileset dir="${module.image_editor.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.image_editor.tests" depends="register.custom.compilers,compile.module.image_editor.production" description="compile module Image Editor; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.image_editor" description="cleanup module">
+    <delete dir="${image_editor.output.dir}"/>
+    <delete dir="${image_editor.testoutput.dir}"/>
+  </target>
+</project>
